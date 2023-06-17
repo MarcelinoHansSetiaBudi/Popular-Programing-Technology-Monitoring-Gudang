@@ -10,7 +10,7 @@ import (
 var DB *gorm.DB
 
 func ConnectDB(){
-	db, err := gorm.Open(mysql.Open("root:@tcp(localhost:3306)/database_gudang"))
+	db, err := gorm.Open(mysql.Open("root:@tcp(localhost:3306)/PPT-Monitoring_gudang"))
 
 	if err != nil {
 		panic(err)

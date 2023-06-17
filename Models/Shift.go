@@ -2,9 +2,9 @@ package Models
 
 // Buat DB
 type Shift struct {
-	ID          int    `gorm:"column:id_shift;primaryKey;autoIncrement" json:"id_shift"`
-	ShiftStart  string `gorm:"column:shift_start;type:varchar(255)" json:"shift_start"`
-	ShiftEnd    string `gorm:"column:shift_end;type:varchar(255)" json:"shift_end"`
+	ID          int    `gorm:"column:id_shift;int;primaryKey;autoIncrement" json:"id_shift"`
+	ShiftStart  string `gorm:"column:shift_start;type:varchar(255)" 		json:"shift_start"`
+	ShiftEnd    string `gorm:"column:shift_end;type:varchar(255)" 			json:"shift_end"`
 }
 
 type ShiftInput struct {
