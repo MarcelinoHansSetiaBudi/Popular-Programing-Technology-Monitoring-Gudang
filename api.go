@@ -5,6 +5,7 @@ import (
 	distributorController "FinPro/Controllers/DistributorController"
 	productController "FinPro/Controllers/ProductController"
 	shiftController "FinPro/Controllers/ShiftController"
+	shiftstaffController "FinPro/Controllers/ShiftStaffController"
 	database "FinPro/Database"
 
 	"github.com/gin-gonic/gin"
@@ -42,6 +43,12 @@ func main() {
 	router.PUT("api/gudang/data-staff/:id", datastaffController.Update)
 	router.DELETE("api/gudang/data-staff/:id", datastaffController.Destroy)
 
+	// Shift Staff routes
+	router.GET("api/gudang/shift-staff", shiftstaffController.SelectAllShiftStaff)
+	router.POST("api/gudang/shift-staff", shiftstaffController.Create)
+	router.GET("api/gudang/shift-staff/:id", shiftstaffController.Read)
+	router.PUT("api/gudang/shift-staff/:id", shiftstaffController.Update)
+	router.DELETE("api/gudang/shift-staff/:id", shiftstaffController.Destroy)
 	// Route Prefix Address
 	router.Run("localhost:8080")
 }
