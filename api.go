@@ -37,10 +37,10 @@ func main() {
 
 	// Data Staff routes
 	router.GET("api/gudang/data-staff", datastaffController.GetAllDataStaff)
-	router.POST("api/gudang/shift", datastaffController.Create)
-	router.GET("api/gudang/shift/:id", datastaffController.Read)
-	router.PUT("api/gudang/shift/:id", datastaffController.Update)
-	router.DELETE("api/gudang/shift/:id", datastaffController.Destroy)
+	router.POST("api/gudang/data-staff", datastaffController.Create)
+	router.GET("api/gudang/data-staff/:id", datastaffController.Read)
+	router.PUT("api/gudang/data-staff/:id", datastaffController.Update)
+	router.DELETE("api/gudang/data-staff/:id", datastaffController.Destroy)
 
 	// Route Prefix Address
 	router.Run("localhost:8080")
