@@ -45,9 +45,10 @@ func Create(c *gin.Context) {
 	}
 
 	distributorResponse := Models.DistributorResponse{
-		Name:          distributor.Name,
-		Address:		  distributor.Address,
-		PhoneNumber: distributor.PhoneNumber,
+		ID: 			distributor.ID,	
+		Name:          	distributor.Name,
+		Address:		distributor.Address,
+		PhoneNumber: 	distributor.PhoneNumber,
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": distributorResponse})
@@ -93,9 +94,10 @@ func Update(c *gin.Context) {
 	}
 
 	distributorResponse := Models.DistributorResponse{
-		Name:          distributor.Name,
-		Address:		  distributor.Address,
-		PhoneNumber: distributor.PhoneNumber,
+		ID: 			distributor.ID,
+		Name:          	distributor.Name,
+		Address:		distributor.Address,
+		PhoneNumber: 	distributor.PhoneNumber,
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": distributorResponse})
@@ -103,7 +105,7 @@ func Update(c *gin.Context) {
 
 func Destroy(c *gin.Context) {
 	var distributor Models.Distributor
-	if err := database.DB.Where("distributor_id = ?", c.Param("id")).First(&distributor).Error; err != nil {
+	if err := database.DB.Where("id_distributor = ?", c.Param("id")).First(&distributor).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "NO DATA!"})
 		return
 	}

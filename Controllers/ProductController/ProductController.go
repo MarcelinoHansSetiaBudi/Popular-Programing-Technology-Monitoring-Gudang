@@ -45,9 +45,10 @@ func Create(c *gin.Context) {
 	}
 
 	productResponse := Models.ProductResponse{
-		Name:          product.Name,
-		Stock:		  product.Stock,
-		Brand: product.Brand,
+		ID: 	product.ID,
+		Name:   product.Name,
+		Stock:	product.Stock,
+		Brand: 	product.Brand,
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": productResponse})
@@ -61,9 +62,10 @@ func Read(c *gin.Context) {
 	}
 
 	productResponse := Models.ProductResponse{
-		Name:          product.Name,
-		Stock:		  product.Stock,
-		Brand: product.Brand,
+		ID:		product.ID, 
+		Name:   product.Name,
+		Stock:  product.Stock,
+		Brand: 	product.Brand,
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": productResponse})
@@ -92,6 +94,7 @@ func Update(c *gin.Context) {
 	}
 
 	productResponse := Models.ProductResponse{
+		ID: 			product.ID,		
 		Name:         	product.Name,
 		Stock:		  	product.Stock,
 		Brand: 			product.Brand,

@@ -19,10 +19,11 @@ type DataStaffInput struct {
 }
 
 type DataStaffResponse struct {
-	ID      int    `json:"id_data_staff"`
-	Address string `json:"address"`
-	Phone   string `json:"phone"`
-	Email   string `json:"email"`
+	ID      int    	`json:"id_data_staff"`
+	Name	string	`json:name`
+	Address string 	`json:"address"`
+	Phone   string 	`json:"phone"`
+	Email   string 	`json:"email"`
 }
 
 type DataStaffListResponse struct {
