@@ -1,7 +1,7 @@
 package Models
 
 type DetailOutcomeProduct struct {
-	ID           int        `gorm:"column:id_income_product;int;primaryKey;autoIncrement"	json:"id_income_product"`
+	ID           int        `gorm:"column:id_outcome_product;int;primaryKey;autoIncrement"	json:"id_outcome_product"`
 	ProductID    int        `gorm:"column:product_id;int" 									json:"product_id"`
 	ShiftStaffID int        `gorm:"column:shift_staff_id;int"								json:"shift_staff_id"`
 	Stock        int        `gorm:"column:stock"											json:"stock"`

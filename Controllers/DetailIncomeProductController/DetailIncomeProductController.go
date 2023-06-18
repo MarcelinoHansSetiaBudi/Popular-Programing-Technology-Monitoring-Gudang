@@ -9,108 +9,109 @@ import (
 )
 
 func GetAllDetailIncome(c *gin.Context) {
-	var detailincomeproduct []Models.DetailIncomeProduct
-	database.DB.Find(&detailincomeproduct)
+	var detailincomeproducts []Models.DetailIncomeProduct
+	database.DB.Find(&detailincomeproducts)
 
-	var detailincomeproductResponses []Models.DetailIncomeProductResponse
-	for _, detailincomeproduct := range detailincomeproduct {
-		detailincomeproductResponse := Models.DetailIncomeProductResponse{
-			ID:          	detailincomeproduct.ID,
-			ProductID:		detailincomeproduct.ProductID,
-			ShiftStaffID: 	detailincomeproduct.ShiftStaffID,
-			Stock:    		detailincomeproduct.Stock,
+	var detailincomeproductsResponses []Models.DetailIncomeProductResponse
+	for _, detailincomeproducts := range detailincomeproducts {
+		detailincomeproductsResponse := Models.DetailIncomeProductResponse{
+			ID:          	detailincomeproducts.ID,
+			ProductID:		detailincomeproducts.ProductID,
+			ShiftStaffID: 	detailincomeproducts.ShiftStaffID,
+			Stock:    		detailincomeproducts.Stock,
 		}
-		detailincomeproductResponses = append(detailincomeproductResponses, detailincomeproductResponse)
+		detailincomeproductsResponses = append(detailincomeproductsResponses, detailincomeproductsResponse)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": detailincomeproductResponses})
+	c.JSON(http.StatusOK, gin.H{"data": detailincomeproductsResponses})
 }
 
 func Create(c *gin.Context) {
-	var detailincomeproductInput Models.DetailIncomeProductInput
-	if err := c.ShouldBindJSON(&detailincomeproductInput); err != nil {
+	var detailincomeproductsInput Models.DetailIncomeProductInput
+	if err := c.ShouldBindJSON(&detailincomeproductsInput); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	detailincomeproduct := Models.DetailIncomeProduct{
-		ProductID: 		detailincomeproductInput.ProductID,
-		ShiftStaffID: 	detailincomeproductInput.ShiftStaffID,
-		Stock: 			detailincomeproductInput.Stock,
+	detailincomeproducts := Models.DetailIncomeProduct{
+		ProductID: 		detailincomeproductsInput.ProductID,
+		ShiftStaffID: 	detailincomeproductsInput.ShiftStaffID,
+		DistributorID: 	detailincomeproductsInput.DistributorID,
+		Stock: 			detailincomeproductsInput.Stock,
 	}
 
-	if err := database.DB.Create(&detailincomeproduct).Error; err != nil {
+	if err := database.DB.Create(&detailincomeproducts).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create detail income product"})
 		return
 	}
 
-	detailincomeproductResponse := Models.DetailIncomeProductResponse{
-		ID: 			detailincomeproduct.ID,	
-		ProductID:          	detailincomeproduct.ProductID,
-		ShiftStaffID:		detailincomeproduct.ShiftStaffID,
-		Stock: 	detailincomeproduct.Stock,
+	detailincomeproductsResponse := Models.DetailIncomeProductResponse{
+		ID: 			detailincomeproducts.ID,	
+		ProductID:      detailincomeproducts.ProductID,
+		ShiftStaffID:	detailincomeproducts.ShiftStaffID,
+		Stock: 			detailincomeproducts.Stock,
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": detailincomeproductResponse})
+	c.JSON(http.StatusOK, gin.H{"data": detailincomeproductsResponse})
 }
 
 func Read(c *gin.Context) {
-	var detailincomeproduct Models.DetailIncomeProduct
-	if err := database.DB.Where("id_income_product = ?", c.Param("id")).First(&detailincomeproduct).Error; err != nil {
+	var detailincomeproducts Models.DetailIncomeProduct
+	if err := database.DB.Where("id_income_product = ?", c.Param("id")).First(&detailincomeproducts).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "NO DATA!"})
 		return
 	}
 
-	detailincomeproductResponse := Models.DetailIncomeProductResponse{
-		ID:          	detailincomeproduct.ID,
-		ProductID:		detailincomeproduct.ProductID,
-		ShiftStaffID: 	detailincomeproduct.ShiftStaffID,
-		Stock:          detailincomeproduct.Stock,
+	detailincomeproductsResponse := Models.DetailIncomeProductResponse{
+		ID:          	detailincomeproducts.ID,
+		ProductID:		detailincomeproducts.ProductID,
+		ShiftStaffID: 	detailincomeproducts.ShiftStaffID,
+		Stock:          detailincomeproducts.Stock,
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": detailincomeproductResponse})
+	c.JSON(http.StatusOK, gin.H{"data": detailincomeproductsResponse})
 }
 
 func Update(c *gin.Context) {
-	var detailincomeproduct Models.DetailIncomeProduct
-	if err := database.DB.Where("id_income_product = ?", c.Param("id")).First(&detailincomeproduct).Error; err != nil {
+	var detailincomeproducts Models.DetailIncomeProduct
+	if err := database.DB.Where("id_income_product = ?", c.Param("id")).First(&detailincomeproducts).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "NO DATA!"})
 		return
 	}
 
-	var detailincomeproductInput Models.DetailIncomeProduct
-	if err := c.ShouldBindJSON(&detailincomeproductInput); err != nil {
+	var detailincomeproductsInput Models.DetailIncomeProduct
+	if err := c.ShouldBindJSON(&detailincomeproductsInput); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	detailincomeproduct.ProductID =	  	detailincomeproduct.ProductID
-	detailincomeproduct.ShiftStaff = 	detailincomeproduct.ShiftStaff
-	detailincomeproduct.Stock = 		detailincomeproduct.Stock
+	detailincomeproducts.ProductID =	detailincomeproducts.ProductID
+	detailincomeproducts.ShiftStaff = 	detailincomeproducts.ShiftStaff
+	detailincomeproducts.Stock = 		detailincomeproducts.Stock
 
-	if err := database.DB.Save(&detailincomeproduct).Error; err != nil {
+	if err := database.DB.Save(&detailincomeproducts).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update detail income product"})
 		return
 	}
 
-	detailincomeproductResponse := Models.DetailIncomeProductResponse{
-		ID:          	detailincomeproduct.ID,
-		ProductID:		detailincomeproduct.ProductID,
-		ShiftStaffID: 	detailincomeproduct.ShiftStaffID,
-		Stock:          detailincomeproduct.Stock,
+	detailincomeproductsResponse := Models.DetailIncomeProductResponse{
+		ID:          	detailincomeproducts.ID,
+		ProductID:		detailincomeproducts.ProductID,
+		ShiftStaffID: 	detailincomeproducts.ShiftStaffID,
+		Stock:          detailincomeproducts.Stock,
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": detailincomeproductResponse})
+	c.JSON(http.StatusOK, gin.H{"data": detailincomeproductsResponse})
 }
 
 func Destroy(c *gin.Context) {
-	var detailincomeproduct Models.DetailIncomeProduct
-	if err := database.DB.Where("id_income_product = ?", c.Param("id")).First(&detailincomeproduct).Error; err != nil {
+	var detailincomeproducts Models.DetailIncomeProduct
+	if err := database.DB.Where("id_income_product = ?", c.Param("id")).First(&detailincomeproducts).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "NO DATA!"})
 		return
 	}
 
-	if err := database.DB.Delete(&detailincomeproduct).Error; err != nil {
+	if err := database.DB.Delete(&detailincomeproducts).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete detail income product"})
 		return
 	}
