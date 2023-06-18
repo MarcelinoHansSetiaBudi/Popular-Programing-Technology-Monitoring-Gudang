@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SelectAllShiftStaff(c *gin.Context) {
+func GetAllShiftStaff(c *gin.Context) {
 	var shiftstaff []Models.ShiftStaff
 	database.DB.Find(&shiftstaff)
 
