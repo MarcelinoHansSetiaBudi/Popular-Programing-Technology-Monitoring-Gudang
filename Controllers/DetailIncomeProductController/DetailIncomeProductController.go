@@ -9,21 +9,14 @@ import (
 )
 
 func GetAllDetailIncome(c *gin.Context) {
-	var detailincomeproducts []Models.DetailIncomeProduct
-	database.DB.Find(&detailincomeproducts)
+	var detailincomeproduct []Models.DetailIncomeProduct 
 
-	var detailincomeproductsResponses []Models.DetailIncomeProductResponse
-	for _, detailincomeproducts := range detailincomeproducts {
-		detailincomeproductsResponse := Models.DetailIncomeProductResponse{
-			ID:          	detailincomeproducts.ID,
-			ProductID:		detailincomeproducts.ProductID,
-			ShiftStaffID: 	detailincomeproducts.ShiftStaffID,
-			Stock:    		detailincomeproducts.Stock,
-		}
-		detailincomeproductsResponses = append(detailincomeproductsResponses, detailincomeproductsResponse)
+	if err := database.DB.Preload("Distributor").Preload("Product").Preload("ShiftStaff").Preload("ShiftStaff.Shift").Preload("ShiftStaff.DataStaff").Find(&detailincomeproduct).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "ytta"})
+		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": detailincomeproductsResponses})
+	c.JSON(http.StatusOK, gin.H{"data": detailincomeproduct})
 }
 
 func Create(c *gin.Context) {
@@ -57,19 +50,19 @@ func Create(c *gin.Context) {
 
 func Read(c *gin.Context) {
 	var detailincomeproducts Models.DetailIncomeProduct
-	if err := database.DB.Where("id_income_product = ?", c.Param("id")).First(&detailincomeproducts).Error; err != nil {
+	if err := database.DB.Where("id_income_product = ?", c.Param("id")).Preload("Distributor").Preload("Product").Preload("ShiftStaff").Preload("ShiftStaff.Shift").Preload("ShiftStaff.DataStaff").First(&detailincomeproducts).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "NO DATA!"})
 		return
 	}
 
-	detailincomeproductsResponse := Models.DetailIncomeProductResponse{
-		ID:          	detailincomeproducts.ID,
-		ProductID:		detailincomeproducts.ProductID,
-		ShiftStaffID: 	detailincomeproducts.ShiftStaffID,
-		Stock:          detailincomeproducts.Stock,
-	}
+	// detailincomeproductsResponse := Models.DetailIncomeProductResponse{
+	// 	ID:          	detailincomeproducts.ID,
+	// 	ProductID:		detailincomeproducts.ProductID,
+	// 	ShiftStaffID: 	detailincomeproducts.ShiftStaffID,
+	// 	Stock:          detailincomeproducts.Stock,
+	// }
 
-	c.JSON(http.StatusOK, gin.H{"data": detailincomeproductsResponse})
+	c.JSON(http.StatusOK, gin.H{"data": detailincomeproducts})
 }
 
 func Update(c *gin.Context) {

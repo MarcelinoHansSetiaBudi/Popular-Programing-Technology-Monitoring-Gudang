@@ -6,24 +6,18 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func GetAllDetailOutcome(c *gin.Context) {
-	var detailoutcomeproduct []Models.DetailOutcomeProduct
-	database.DB.Find(&detailoutcomeproduct)
+	var detailoutcomeproduct []Models.DetailOutcomeProduct 
 
-	var detailoutcomeproductResponses []Models.DetailOutcomeProduct
-	for _, detailoutcomeproduct := range detailoutcomeproduct {
-		detailoutcomeproductResponse := Models.DetailOutcomeProduct{
-			ID:          	detailoutcomeproduct.ID,
-			ProductID:		detailoutcomeproduct.ProductID,
-			ShiftStaffID:   detailoutcomeproduct.ShiftStaffID,
-			Stock: 			detailoutcomeproduct.Stock,
-		}
-		detailoutcomeproductResponses = append(detailoutcomeproductResponses, detailoutcomeproductResponse)
+	if err := database.DB.Preload("Product").Preload("ShiftStaff").Preload("ShiftStaff.Shift").Preload("ShiftStaff.DataStaff").Find(&detailoutcomeproduct).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "ytta"})
+		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": detailoutcomeproductResponses})
+	c.JSON(http.StatusOK, gin.H{"data": detailoutcomeproduct})
 }
 
 func Create(c *gin.Context) {
@@ -39,11 +33,21 @@ func Create(c *gin.Context) {
 		Stock: 			detailoutcomeproductInput.Stock,
 	}
 
-	if err := database.DB.Create(&detailoutcomeproduct).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create outcome product"})
-		return
-	}
+	err := database.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&detailoutcomeproduct).Error; err != nil {
+			return err
+		}
 
+		if err := tx.Preload("Product").Preload("ShiftStaff").Preload("ShiftStaff.Shift").Preload("ShiftStaff.DataStaff").First(&detailoutcomeproduct, detailoutcomeproduct.ID).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal membuat data rental"})
+	}
 	detailoutcomeproductsResponse := Models.DetailOutcomeProductResponse{
 		ID:          	detailoutcomeproduct.ID,
 		ProductID:		detailoutcomeproduct.ProductID,
@@ -52,23 +56,23 @@ func Create(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": detailoutcomeproductsResponse})
-}
+	}
 
 func Read(c *gin.Context) {
 	var detailoutcomeproduct Models.DetailOutcomeProduct
-	if err := database.DB.Where("id_outcome_product = ?", c.Param("id")).First(&detailoutcomeproduct).Error; err != nil {
+	if err := database.DB.Where("id_outcome_product = ?", c.Param("id")).Preload("Product").Preload("ShiftStaff").Preload("ShiftStaff.Shift").Preload("ShiftStaff.DataStaff").First(&detailoutcomeproduct).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "NO DATA!"})
 		return
 	}
 
-	detailoutcomeproductResponse := Models.DetailOutcomeProductResponse{
-		ID:          	detailoutcomeproduct.ID,
-		ProductID:		detailoutcomeproduct.ProductID,
-		ShiftStaffID:   detailoutcomeproduct.ShiftStaffID,
-		Stock: 			detailoutcomeproduct.Stock,
-	}
+	// detailoutcomeproductResponse := Models.DetailOutcomeProductResponse{
+	// 	ID:          	detailoutcomeproduct.ID,
+	// 	ProductID:		detailoutcomeproduct.ProductID,
+	// 	ShiftStaffID:   detailoutcomeproduct.ShiftStaffID,
+	// 	Stock: 			detailoutcomeproduct.Stock,
+	// }
 
-	c.JSON(http.StatusOK, gin.H{"data": detailoutcomeproductResponse})
+	c.JSON(http.StatusOK, gin.H{"data": detailoutcomeproduct})
 }
 
 func Update(c *gin.Context) {
@@ -84,22 +88,21 @@ func Update(c *gin.Context) {
 		return
 	}
 
-	detailoutcomeproduct.ProductID =	detailoutcomeproductInput.ProductID
+	detailoutcomeproduct.ProductID = detailoutcomeproductInput.ProductID
 	detailoutcomeproduct.ShiftStaffID = detailoutcomeproductInput.ShiftStaffID
-	detailoutcomeproduct.Stock = 		detailoutcomeproductInput.Stock
+	detailoutcomeproduct.Stock = detailoutcomeproductInput.Stock
 
 	if err := database.DB.Save(&detailoutcomeproduct).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update outcome product"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update detail outcome product"})
 		return
 	}
 
 	detailoutcomeproductResponse := Models.DetailOutcomeProductResponse{
-		ID:          	detailoutcomeproduct.ID,
-		ProductID:		detailoutcomeproduct.ProductID,
-		ShiftStaffID:   detailoutcomeproduct.ShiftStaffID,
-		Stock: 			detailoutcomeproduct.Stock,
+		ID:           detailoutcomeproduct.ID,
+		ProductID:    detailoutcomeproduct.ProductID,
+		ShiftStaffID: detailoutcomeproduct.ShiftStaffID,
+		Stock:        detailoutcomeproduct.Stock,
 	}
-
 
 	c.JSON(http.StatusOK, gin.H{"data": detailoutcomeproductResponse})
 }

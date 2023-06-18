@@ -10,19 +10,11 @@ import (
 
 func GetAllShiftStaff(c *gin.Context) {
 	var shiftstaff []Models.ShiftStaff
-	database.DB.Find(&shiftstaff)
-
-	var shiftstaffRepsonses []Models.ShiftStaffResponse
-	for _, shiftstaff := range shiftstaff {
-		shiftstaffResponse := Models.ShiftStaffResponse{
-			ID:         shiftstaff.ID,
-			StaffID:	shiftstaff.StaffID,
-			ShiftID: 	shiftstaff.ShiftID,
-		}
-		shiftstaffRepsonses = append(shiftstaffRepsonses, shiftstaffResponse)
+	if err := database.DB.Preload("DataStaff").Preload("Shift").Find(&shiftstaff).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "NO DATA!"})
+		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"data": shiftstaffRepsonses})
+	c.JSON(http.StatusOK, gin.H{"data": shiftstaff})
 }
 
 func Create(c *gin.Context) {
@@ -52,19 +44,19 @@ func Create(c *gin.Context) {
 }
 
 func Read(c *gin.Context) {
-	var shiftstaff Models.ShiftStaff
-	if err := database.DB.Where("id_shift_staff = ?", c.Param("id")).First(&shiftstaff).Error; err != nil {
+	var shiftstaff []Models.ShiftStaff
+	if err := database.DB.Where("id_shift_staff = ?", c.Param("id")).Preload("DataStaff").Preload("Shift").First(&shiftstaff).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "NO DATA!"})
 		return
 	}
 
-	shiftstaffResponse := Models.ShiftStaffResponse{
-		ID: 		shiftstaff.ID,
-		StaffID: 	shiftstaff.StaffID,
-		ShiftID: 	shiftstaff.ShiftID,
-	}
+	// shiftstaffResponse := Models.ShiftStaffResponse{
+	// 	ID: 		shiftstaff.ID,
+	// 	StaffID: 	shiftstaff.StaffID,
+	// 	ShiftID: 	shiftstaff.ShiftID,
+	// }
 
-	c.JSON(http.StatusOK, gin.H{"data": shiftstaffResponse})
+	c.JSON(http.StatusOK, gin.H{"data": shiftstaff})
 }
 
 func Update(c *gin.Context) {
