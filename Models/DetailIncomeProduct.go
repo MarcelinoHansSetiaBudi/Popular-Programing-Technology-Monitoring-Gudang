@@ -4,7 +4,7 @@ type DetailIncomeProduct struct {
 	ID            int         `gorm:"column:id_income_product;int;primaryKey;autoIncrement"	json:"id_income_product"`
 	ProductID     int         `gorm:"column:product_id;int"									json:"product_id"`
 	ShiftStaffID  int         `gorm:"column:shift_staff_id;int"								json:"shift_staff_id"`
-	DistributorID int         `gorm:"column:id_distributor;int"								json:"distributor_id"`
+	DistributorID int         `gorm:"column:distributor_id;int"								json:"distributor_id"`
 	Stock         int         `gorm:"column:stock" json:"stock"`
 	Distributor   Distributor `gorm:"foreignKey:DistributorID"`
 	ShiftStaff    ShiftStaff  `gorm:"foreignKey:ShiftStaffID"`

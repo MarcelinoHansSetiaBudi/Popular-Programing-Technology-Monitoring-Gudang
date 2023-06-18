@@ -73,35 +73,35 @@ func Read(c *gin.Context) {
 }
 
 func Update(c *gin.Context) {
-	var detailincomeproducts Models.DetailIncomeProduct
-	if err := database.DB.Where("id_income_product = ?", c.Param("id")).First(&detailincomeproducts).Error; err != nil {
+	var detailincomeproduct Models.DetailIncomeProduct
+	if err := database.DB.Where("id_income_product = ?", c.Param("id")).First(&detailincomeproduct).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "NO DATA!"})
 		return
 	}
 
-	var detailincomeproductsInput Models.DetailIncomeProduct
-	if err := c.ShouldBindJSON(&detailincomeproductsInput); err != nil {
+	var detailincomeproductInput Models.DetailIncomeProduct
+	if err := c.ShouldBindJSON(&detailincomeproductInput); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	detailincomeproducts.ProductID =	detailincomeproducts.ProductID
-	detailincomeproducts.ShiftStaff = 	detailincomeproducts.ShiftStaff
-	detailincomeproducts.Stock = 		detailincomeproducts.Stock
+	detailincomeproduct.ProductID = detailincomeproductInput.ProductID
+	detailincomeproduct.ShiftStaffID = detailincomeproductInput.ShiftStaffID
+	detailincomeproduct.Stock = detailincomeproductInput.Stock
 
-	if err := database.DB.Save(&detailincomeproducts).Error; err != nil {
+	if err := database.DB.Save(&detailincomeproduct).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update detail income product"})
 		return
 	}
 
-	detailincomeproductsResponse := Models.DetailIncomeProductResponse{
-		ID:          	detailincomeproducts.ID,
-		ProductID:		detailincomeproducts.ProductID,
-		ShiftStaffID: 	detailincomeproducts.ShiftStaffID,
-		Stock:          detailincomeproducts.Stock,
+	detailincomeproductResponse := Models.DetailIncomeProductResponse{
+		ID:           detailincomeproduct.ID,
+		ProductID:    detailincomeproduct.ProductID,
+		ShiftStaffID: detailincomeproduct.ShiftStaffID,
+		Stock:        detailincomeproduct.Stock,
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": detailincomeproductsResponse})
+	c.JSON(http.StatusOK, gin.H{"data": detailincomeproductResponse})
 }
 
 func Destroy(c *gin.Context) {
