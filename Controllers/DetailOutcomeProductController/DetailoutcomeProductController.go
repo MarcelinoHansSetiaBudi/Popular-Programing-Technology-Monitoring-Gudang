@@ -46,7 +46,7 @@ func Create(c *gin.Context) {
 	})
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal membuat data rental"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal membuat detail outcome product"})
 	}
 	detailoutcomeproductsResponse := Models.DetailOutcomeProductResponse{
 		ID:          	detailoutcomeproduct.ID,

@@ -1,6 +1,7 @@
 package main
 
 import (
+	authController "FinPro/Controllers/AuthController"
 	datastaffController "FinPro/Controllers/DataStaffController"
 	detailincomeProductController "FinPro/Controllers/DetailIncomeProductController"
 	detailoutcomeProductController "FinPro/Controllers/DetailOutcomeProductController"
@@ -8,7 +9,9 @@ import (
 	productController "FinPro/Controllers/ProductController"
 	shiftController "FinPro/Controllers/ShiftController"
 	shiftstaffController "FinPro/Controllers/ShiftStaffController"
+	userController "FinPro/Controllers/UserController"
 	database "FinPro/Database"
+	middleware "FinPro/Middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,54 +20,68 @@ func main() {
 	router := gin.Default()
 	database.ConnectDB()
 
-	// Distributor routes
-	router.GET("api/gudang/distributor", distributorController.GetAllDistributor)
-	router.POST("api/gudang/distributor", distributorController.Create)
-	router.GET("api/gudang/distributor/:id", distributorController.Read)
-	router.PUT("api/gudang/distributor/:id", distributorController.Update)
-	router.DELETE("api/gudang/distributor/:id", distributorController.Destroy)
+	// Users Routes
+	router.POST("/api/users/login", authController.LoginHandler)
+	router.POST("/api/users", userController.UserCreate)
 
-	// Product routes
-	router.GET("api/gudang/product", productController.GetAllProduct)
-	router.POST("api/gudang/product", productController.Create)
-	router.GET("api/gudang/product/:id", productController.Read)
-	router.PUT("api/gudang/product/:id", productController.Update)
-	router.DELETE("api/gudang/product/:id", productController.Destroy)
+	authMiddleware := middleware.RequireAuth
 
-	// Shift routes
-	router.GET("api/gudang/shift", shiftController.GetAllShift)
-	router.POST("api/gudang/shift", shiftController.Create)
-	router.GET("api/gudang/shift/:id", shiftController.Read)
-	router.PUT("api/gudang/shift/:id", shiftController.Update)
-	router.DELETE("api/gudang/shift/:id", shiftController.Destroy)
+	auth := router.Group("/api")
+	auth.Use(authMiddleware)
+	{
+		// User 
+		auth.POST("users/logout", authController.LogoutHandler)
 
-	// Data Staff routes
-	router.GET("api/gudang/data-staff", datastaffController.GetAllDataStaff)
-	router.POST("api/gudang/data-staff", datastaffController.Create)
-	router.GET("api/gudang/data-staff/:id", datastaffController.Read)
-	router.PUT("api/gudang/data-staff/:id", datastaffController.Update)
-	router.DELETE("api/gudang/data-staff/:id", datastaffController.Destroy)
+		// Distributor routes
+		auth.GET("gudang/distributor", distributorController.GetAllDistributor)
+		auth.POST("gudang/distributor", distributorController.Create)
+		auth.GET("gudang/distributor/:id", distributorController.Read)
+		auth.PUT("gudang/distributor/:id", distributorController.Update)
+		auth.DELETE("gudang/distributor/:id", distributorController.Destroy)
 
-	// Shift Staff routes
-	router.GET("api/gudang/shift-staff", shiftstaffController.GetAllShiftStaff)
-	router.POST("api/gudang/shift-staff", shiftstaffController.Create)
-	router.GET("api/gudang/shift-staff/:id", shiftstaffController.Read)
-	router.PUT("api/gudang/shift-staff/:id", shiftstaffController.Update)
-	router.DELETE("api/gudang/shift-staff/:id", shiftstaffController.Destroy)
+		// Product routes
+		auth.GET("gudang/product", productController.GetAllProduct)
+		auth.POST("gudang/product", productController.Create)
+		auth.GET("gudang/product/:id", productController.Read)
+		auth.PUT("gudang/product/:id", productController.Update)
+		auth.DELETE("gudang/product/:id", productController.Destroy)
+
+		// Shift routes
+		auth.GET("gudang/shift", shiftController.GetAllShift)
+		auth.POST("gudang/shift", shiftController.Create)
+		auth.GET("gudang/shift/:id", shiftController.Read)
+		auth.PUT("gudang/shift/:id", shiftController.Update)
+		auth.DELETE("gudang/shift/:id", shiftController.Destroy)
+
+		// Data Staff routes
+		auth.GET("gudang/data-staff", datastaffController.GetAllDataStaff)
+		auth.POST("gudang/data-staff", datastaffController.Create)
+		auth.GET("gudang/data-staff/:id", datastaffController.Read)
+		auth.PUT("gudang/data-staff/:id", datastaffController.Update)
+		auth.DELETE("gudang/data-staff/:id", datastaffController.Destroy)
+
+		// Shift Staff routes
+		auth.GET("gudang/shift-staff", shiftstaffController.GetAllShiftStaff)
+		auth.POST("gudang/shift-staff", shiftstaffController.Create)
+		auth.GET("gudang/shift-staff/:id", shiftstaffController.Read)
+		auth.PUT("gudang/shift-staff/:id", shiftstaffController.Update)
+		auth.DELETE("gudang/shift-staff/:id", shiftstaffController.Destroy)
+		
+		// Detail Income Product routes
+		auth.GET("gudang/detail-income", detailincomeProductController.GetAllDetailIncome)
+		auth.POST("gudang/detail-income", detailincomeProductController.Create)
+		auth.GET("gudang/detail-income/:id", detailincomeProductController.Read)
+		auth.PUT("gudang/detail-income/:id", detailincomeProductController.Update)
+		auth.DELETE("gudang/detail-income/:id", detailincomeProductController.Destroy)
+
+		// Detail Outcome Product routes
+		auth.GET("gudang/detail-outcome", detailoutcomeProductController.GetAllDetailOutcome)
+		auth.POST("gudang/detail-outcome", detailoutcomeProductController.Create)
+		auth.GET("gudang/detail-outcome/:id", detailoutcomeProductController.Read)
+		auth.PUT("gudang/detail-outcome/:id", detailoutcomeProductController.Update)
+		auth.DELETE("gudang/detail-outcome/:id", detailoutcomeProductController.Destroy)
+	}
 	
-	// Detail Income Product routes
-	router.GET("api/gudang/detail-income", detailincomeProductController.GetAllDetailIncome)
-	router.POST("api/gudang/detail-income", detailincomeProductController.Create)
-	router.GET("api/gudang/detail-income/:id", detailincomeProductController.Read)
-	router.PUT("api/gudang/detail-income/:id", detailincomeProductController.Update)
-	router.DELETE("api/gudang/detail-income/:id", detailincomeProductController.Destroy)
-
-	// Detail Outcome Product routes
-	router.GET("api/gudang/detail-outcome", detailoutcomeProductController.GetAllDetailOutcome)
-	router.POST("api/gudang/detail-outcome", detailoutcomeProductController.Create)
-	router.GET("api/gudang/detail-outcome/:id", detailoutcomeProductController.Read)
-	router.PUT("api/gudang/detail-outcome/:id", detailoutcomeProductController.Update)
-	router.DELETE("api/gudang/detail-outcome/:id", detailoutcomeProductController.Destroy)
 	
 	// Route Prefix Address
 	router.Run("localhost:8080")
